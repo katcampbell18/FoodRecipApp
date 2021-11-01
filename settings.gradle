@@ -7,7 +7,14 @@ pluginManagement {
     plugins {
         id 'com.android.application' version '7.1.0-alpha04'
         id 'com.android.library' version '7.1.0-alpha04'
-        id 'org.jetbrains.kotlin.android' version '1.5.10'
+        id 'org.jetbrains.kotlin.android' version '1.5.31'
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'dagger.hilt.android.plugin') {
+                useModule("com.google.dagger:hilt-android-gradle-plugin:2.38.1")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
