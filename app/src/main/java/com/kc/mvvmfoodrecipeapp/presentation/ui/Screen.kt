@@ -1,4 +1,4 @@
-package com.kc.mvvmfoodrecipeapp
+package com.kc.mvvmfoodrecipeapp.presentation.ui
 
 sealed class Screen(val route: String) {
     object RecipeListScreen: Screen("recipeList_screen")
