@@ -1,5 +1,6 @@
 package com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list
 
+import android.media.MediaRouter
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -27,23 +28,40 @@ class RecipeListViewModel
 
     private var recipes: List<RecipeItem> by mutableStateOf(listOf())
 
-    var query = mutableStateOf("Chicken")
+    val query = mutableStateOf("")
+
+    val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
+
+    var categoryScrollPosition: Int = 0
 
     init {
-        newSearch(query.value)
+        newSearch()
     }
 
-    fun newSearch(query: String){
+    fun newSearch(){
         viewModelScope.launch{
             try{
                 val result = repository.search(
                     token = token,
                     page = 1,
-                    query = query)
+                    query = query.value)
                 recipes = result
             } catch(e: Exception){
                 Log.e(TAG, ERROR_MESSAGE)
             }
         }
+    }
+
+    fun onQueryChanged(query: String){
+        this.query.value = query
+    }
+
+    fun onSelectedCategoryChanged(category: String){
+        val newCategory = getFoodCategory(category)
+        selectedCategory.value = newCategory
+    }
+
+    fun onChangeCategoryScrollPosition(position: Int){
+        categoryScrollPosition = position
     }
     }

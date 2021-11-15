@@ -21,7 +21,7 @@ import com.kc.mvvmfoodrecipeapp.data.model.RecipeItem
 fun RecipeCard(
     recipe: RecipeItem,
     onClick: () -> Unit,
-//    navController: NavController
+    navController: NavController
 ){
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -33,7 +33,7 @@ fun RecipeCard(
             .fillMaxWidth()
             .clickable {
                 onClick()
-//                       navController.navigate(Screen.RecipeDetailScreen.route)
+                       navController.navigate(Screen.RecipeDetailScreen.route)
             },
         elevation = 8.dp,
     ) {
