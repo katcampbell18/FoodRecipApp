@@ -15,6 +15,7 @@ import com.kc.mvvmfoodrecipeapp.data.repository.RecipeRepository
 import com.kc.mvvmfoodrecipeapp.data.util.Constants.Companion.ERROR_MESSAGE
 import com.kc.mvvmfoodrecipeapp.data.util.Constants.Companion.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -34,6 +35,8 @@ class RecipeListViewModel
 
     var categoryScrollPosition: Int = 0
 
+    val loading = mutableStateOf(false)
+
     init {
         newSearch()
     }
@@ -41,14 +44,30 @@ class RecipeListViewModel
     fun newSearch(){
         viewModelScope.launch{
             try{
+                loading.value = true
+                resetSearchState()
+                delay(3000)
+
                 val result = repository.search(
                     token = token,
                     page = 1,
                     query = query.value)
                 recipes = result
+                loading.value = false
             } catch(e: Exception){
                 Log.e(TAG, ERROR_MESSAGE)
             }
+        }
+    }
+
+    private fun clearSelectedCategory(){
+        selectedCategory.value = null
+    }
+
+    private fun resetSearchState(){
+        recipes = listOf()
+        if(selectedCategory.value?.value != query.value){
+            clearSelectedCategory()
         }
     }
 
