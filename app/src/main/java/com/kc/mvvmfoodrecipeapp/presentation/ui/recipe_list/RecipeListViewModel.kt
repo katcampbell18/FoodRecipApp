@@ -37,6 +37,8 @@ class RecipeListViewModel
 
     val loading = mutableStateOf(false)
 
+    val isDark = mutableStateOf(false)
+
     init {
         newSearch()
     }
@@ -83,4 +85,9 @@ class RecipeListViewModel
     fun onChangeCategoryScrollPosition(position: Int){
         categoryScrollPosition = position
     }
+
+    fun onToggleTheme(){
+            isDark.value = !isDark.value
+        }
     }
+

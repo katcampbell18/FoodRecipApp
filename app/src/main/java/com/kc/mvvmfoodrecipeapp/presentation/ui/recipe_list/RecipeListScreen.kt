@@ -1,11 +1,13 @@
 package com.kc.mvvmfoodrecipeapp
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,12 +37,14 @@ fun RecipeListScreen(recipeList: List<RecipeItem>, vm: RecipeListViewModel) {
             selectedCategory = selectedCategory,
             onSelectedCategoryChanged = vm::onSelectedCategoryChanged,
             categoryScrollPosition = categoryScrollPosition,
-            onChangeCategoryScrollPosition = vm::onChangeCategoryScrollPosition
+            onChangeCategoryScrollPosition = vm::onChangeCategoryScrollPosition,
+            onToggleTheme = vm::onToggleTheme,
         )
 
         Box (
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = MaterialTheme.colors.background)
                 ) {
             if (loading) {
                 ShimmerRecipeCardItem(
