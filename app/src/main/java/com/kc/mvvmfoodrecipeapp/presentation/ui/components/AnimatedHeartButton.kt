@@ -79,7 +79,7 @@ object HeartAnimationDefinition {
 
         Image(
             imageVector = Icons.Default.Favorite,
-            contentDescription = "HeartButton",
+            contentDescription = "HeartButto
             modifier = modifier
                 .height(heartSize)
                 .width(heartSize)

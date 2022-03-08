@@ -2,6 +2,8 @@ package com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list
 
 import android.media.MediaRouter
 import android.util.Log
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
