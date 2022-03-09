@@ -2,16 +2,11 @@ package com.kc.mvvmfoodrecipeapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,6 +21,9 @@ import com.kc.mvvmfoodrecipeapp.presentation.ui.SearchAppBar
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.CircularIndeterminateProgressBar
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.DefaultSnackbar
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.ShimmerRecipeCardItem
+import com.kc.mvvmfoodrecipeapp.presentation.ui.components.scaffold.MyBottomBar
+import com.kc.mvvmfoodrecipeapp.presentation.ui.components.scaffold.MyDrawer
+import com.kc.mvvmfoodrecipeapp.presentation.ui.components.util.PAGE_SIZE
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.util.SnackbarController
 import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.FoodCategory
 import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.RecipeListViewModel
@@ -47,6 +45,8 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
     val coroutineScope = rememberCoroutineScope()
 
     val snackbarController = SnackbarController(coroutineScope)
+
+    val page = vm.page.value
 
     Scaffold(
         topBar = {
@@ -91,7 +91,7 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
                 .fillMaxSize()
                 .background(color = MaterialTheme.colors.background)
                 ) {
-            if (loading) {
+            if (loading && recipeList.isEmpty()) {
                 ShimmerRecipeCardItem(
                     imageHeight = 250.dp,
                     padding = 8.dp
@@ -102,6 +102,10 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
                         items = recipeList
                     )
                     { index, recipe ->
+                        vm.onChangeRecipeScrollPosition(index)
+                        if((index + 1) >= (page * PAGE_SIZE) && !loading){
+                            vm.nextPage()
+                        }
                         RecipeCard( recipe = recipe, onClick = {
                             navController.navigate(Screen.RecipeDetailScreen.route + "/${recipe.id}")},
                         )
@@ -120,48 +124,5 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
                 )
             }
         }
-    }
-}
-
-
-@Composable
-fun MyBottomBar(
-//    TODO: add navigation
-//    navController: NavController
-){
-    BottomNavigation(
-        elevation = 12.dp
-            ){
-        BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.Home,
-            contentDescription = "can't display icon")} ,
-            selected = false,
-            onClick ={
-//                     navController.navigate(Screen.RecipeListScreen.route)
-            },
-                )
-        BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.Search,
-                contentDescription = "search icon")} ,
-            selected = true,
-            onClick ={},
-        )
-        BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.AccountBox,
-                contentDescription = "account icon")} ,
-            selected = false,
-            onClick ={},
-        )
-    }
-}
-
-@Composable
-fun MyDrawer(){
-    Column(){
-        Text(text = "Item1")
-        Text(text = "Item2")
-        Text(text = "Item3")
-        Text(text = "Item4")
-        Text(text = "Item5")
     }
 }

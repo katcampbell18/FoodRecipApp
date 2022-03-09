@@ -16,6 +16,7 @@ import com.kc.mvvmfoodrecipeapp.data.model.RecipeItem
 import com.kc.mvvmfoodrecipeapp.data.repository.RecipeRepository
 import com.kc.mvvmfoodrecipeapp.data.util.Constants.Companion.ERROR_MESSAGE
 import com.kc.mvvmfoodrecipeapp.data.util.Constants.Companion.TAG
+import com.kc.mvvmfoodrecipeapp.presentation.ui.components.util.PAGE_SIZE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,6 +42,10 @@ class RecipeListViewModel
 
     val isDark = mutableStateOf(false)
 
+    val page = mutableStateOf(1)
+
+    private var recipeListScrollPosition = 0
+
     init {
         newSearch()
     }
@@ -64,12 +69,56 @@ class RecipeListViewModel
         }
     }
 
+    fun nextPage(){
+        viewModelScope.launch {
+            // prevent duplicate events due to recompose happening to quickly
+            if((recipeListScrollPosition + 1) >= (page.value * PAGE_SIZE)){
+                loading.value = true
+                incrementPage()
+                Log.d(TAG, "nextPage: triggered: ${page.value}")
+
+                if(page.value > 1){
+                    val result = repository.search(
+                        token = token,
+                        page = page.value,
+                        query = query.value
+                    )
+                    Log.d(TAG, "search: appending: $result")
+                    appendRecipes(result)
+                }
+                loading.value = false
+            }
+        }
+    }
+
+    /**
+     * Append new recipes to the current list of recipes
+     */
+    private fun appendRecipes(recipe: List<RecipeItem>){
+        val currentList = ArrayList(this.recipes)
+        currentList.addAll(recipe)
+        this.recipes = currentList
+    }
+
+    private fun incrementPage(){
+        page.value = page.value + 1
+    }
+
+    fun onChangeRecipeScrollPosition(position: Int){
+        recipeListScrollPosition = position
+    }
+
     private fun clearSelectedCategory(){
         selectedCategory.value = null
     }
 
+    /**
+     * Called when a new search is executed
+     */
     private fun resetSearchState(){
         recipes = listOf()
+        page.value = 1
+        onChangeRecipeScrollPosition(0)
         if(selectedCategory.value?.value != query.value){
             clearSelectedCategory()
         }
