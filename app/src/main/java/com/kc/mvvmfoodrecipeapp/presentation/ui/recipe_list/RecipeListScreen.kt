@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,9 +22,10 @@ import com.kc.mvvmfoodrecipeapp.presentation.ui.components.DefaultSnackbar
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.ShimmerRecipeCardItem
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.scaffold.MyBottomBar
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.scaffold.MyDrawer
-import com.kc.mvvmfoodrecipeapp.presentation.ui.components.util.PAGE_SIZE
 import com.kc.mvvmfoodrecipeapp.presentation.ui.components.util.SnackbarController
 import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.FoodCategory
+import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.PAGE_SIZE
+import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.RecipeListEvent
 import com.kc.mvvmfoodrecipeapp.presentation.ui.recipe_list.RecipeListViewModel
 import kotlinx.coroutines.launch
 
@@ -63,17 +63,17 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
                                     actionLabel = "Hide",
                                 )
                             }
-                        } else {
-                            vm::newSearch
+                        } else run {
+                            vm.onTriggerEvent(RecipeListEvent.NewSearchEvent)
                         }
                     }
                 },
-                    selectedCategory = selectedCategory,
-                    onSelectedCategoryChanged = vm::onSelectedCategoryChanged,
-                    categoryScrollPosition = categoryScrollPosition,
-                    onChangeCategoryScrollPosition = vm::onChangeCategoryScrollPosition,
-                    onToggleTheme = vm::onToggleTheme,
-                    )
+                selectedCategory = selectedCategory,
+                onSelectedCategoryChanged = vm::onSelectedCategoryChanged,
+                categoryScrollPosition = categoryScrollPosition,
+                onChangeCategoryScrollPosition = vm::onChangeCategoryScrollPosition,
+                onToggleTheme = vm::onToggleTheme,
+                )
         },
         scaffoldState = scaffoldState,
         snackbarHost = {
@@ -104,7 +104,7 @@ fun RecipeListScreen(navController: NavController, recipeList: List<RecipeItem>,
                     { index, recipe ->
                         vm.onChangeRecipeScrollPosition(index)
                         if((index + 1) >= (page * PAGE_SIZE) && !loading){
-                            vm.nextPage()
+                            vm.onTriggerEvent(RecipeListEvent.NextPageEvent)
                         }
                         RecipeCard( recipe = recipe, onClick = {
                             navController.navigate(Screen.RecipeDetailScreen.route + "/${recipe.id}")},
